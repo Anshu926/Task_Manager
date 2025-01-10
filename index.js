@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const port = 1010; 
+const port = process.env.PORT || 3000; // Define your port
 const path = require("path");
 const connect_db = require("./connect_db");
 const methodOverride = require("method-override");
@@ -517,3 +517,4 @@ app.get("*", (req, res) => {
 app.listen(port, () => {
     console.log(`App is running on port ${port}`);
 });
+

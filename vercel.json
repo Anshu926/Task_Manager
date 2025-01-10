@@ -1,0 +1,14 @@
+{
+  "builds": [
+    {
+      "src": "index.js",  // Your main server file
+      "use": "@vercel/node" // Use the Vercel Node.js runtime
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",  // Route for everything
+      "dest": "/index.js"  // Redirect all routes to your main server
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const port = 1010;
+const port = 1010; 
 const path = require("path");
 const connect_db = require("./connect_db");
 const methodOverride = require("method-override");
@@ -9,14 +9,16 @@ const User_passport_model = require("./user_model");
 const passport = require('passport');
 const localStrategy = require('passport-local');
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
-const GrandSchema = require('./schema_&_model');  // Ensure this file exports GrandSchema
+const GrandSchema = require('./schema_&_model');  
+const mongo_url = process.env.MONGO_URL ;
 
-   
 
-// Connection to database
+     
+// Connection to database 
 connect_db();
-
+ 
 // Middleware
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -24,14 +26,28 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 
-// Session middleware for flash messages
+// Session middleware and Mongostore middleware
 app.use(
     session({
-        secret: "yourSecretKey", // Replace with a strong, unique secret
+        secret: "yourSecretKey",
         resave: false,
         saveUninitialized: true,
+        store: MongoStore.create({
+            mongoUrl: mongo_url,
+            crypto: {
+                secret:  "yourSecretKey",
+            },
+            touchAfter: 24 * 3600,
+        }),
+        cookie: {
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+            httpOnly: true,
+        },
     })
 );
+
+
 app.use(flash());
 
 // Middleware to make flash messages accessible globally
